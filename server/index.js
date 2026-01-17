@@ -139,11 +139,19 @@ app.get('/api/faculties', async (req, res) => {
 });
 
 // Search API (Trie)
-app.get('/api/search', (req, res) => {
+// Search API (Trie)
+app.get('/api/search', async (req, res) => {
     const { q } = req.query;
     if (!q) return res.json([]);
 
     try {
+        // Serverless Cold Start Protection:
+        // If Trie is empty (e.g. server just woke up), re-fill it from DB.
+        if (!trie.root || Object.keys(trie.root.children).length === 0) {
+            console.log('Trie is empty, re-initializing...');
+            await initializeTrie();
+        }
+
         const results = trie.search(q);
         res.json(results);
     } catch (err) {
@@ -293,18 +301,14 @@ app.delete('/api/timetable/:id', async (req, res) => {
     }
 });
 
-
 // Start Server
-if (require.main === module) {
-    // This runs only when you type 'node index.js' locally
+if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
         initializeTrie();
     });
 } else {
-    // This runs on Vercel (serverless mode)
     initializeTrie();
 }
 
-// Export the app so Vercel can find it
 module.exports = app;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { API_URL } from './config';
+import { API_URL } from '../config';
 
 const FacultyProfile = () => {
     const { id } = useParams();
@@ -98,7 +98,7 @@ const FacultyProfile = () => {
                                 </tr>
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-100">
-                                {faculty.timetables.length > 0 ? faculty.timetables.map((t) => (
+                                {faculty.timetables && faculty.timetables.length > 0 ? faculty.timetables.map((t) => (
                                     <tr key={t.id} className="hover:bg-gray-50 transition">
                                         <td className="px-8 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{t.day_of_week}</td>
                                         <td className="px-8 py-4 whitespace-nowrap text-sm text-gray-600 font-mono bg-gray-50 rounded-sm">
