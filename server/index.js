@@ -294,13 +294,16 @@ app.delete('/api/timetable/:id', async (req, res) => {
 });
 
 // Start Server
-if (process.env.NODE_ENV !== 'production') {
+if (require.main === module) {
+    // This runs only when you type 'node index.js' locally
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
         initializeTrie();
     });
 } else {
+    // This runs on Vercel (serverless mode)
     initializeTrie();
 }
 
+// Export the app so Vercel can find it
 module.exports = app;
